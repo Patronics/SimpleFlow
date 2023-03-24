@@ -1,14 +1,23 @@
 ? Happy Birthday song in SimpleFlow
 chorus:
-print Happy Birthday to you,
+print Happy Birthday to you
+? Add comma or exclamation point
+punctuation:
+pause 0.5
+goto exclamation 1
+comma:
+print ,
+goto end_punctuation 2
+exclamation:
+print !
+? End of punctuation
+end_punctuation:
 pause 0.5
 goto chorus 2
 ? End of the first two choruses
 end_chorus:
 print Happy Birthday dear [Name],
 pause 0.5
-print Happy Birthday to you!
-pause 0.5
-goto end
+goto chorus 1
 ? Label for program end
 end:
