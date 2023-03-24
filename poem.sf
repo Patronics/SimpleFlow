@@ -9,7 +9,7 @@ print Sugar is sweet,
 pause 0.5
 print And so are you.
 pause 1
-goto loop 2
+goto loop 1
 ? End of the repeated stanzas
 end_of_loop:
 print But sometimes they wither,

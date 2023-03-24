@@ -1,0 +1,14 @@
+? Happy Birthday song in SimpleFlow
+chorus:
+print Happy Birthday to you,
+pause 0.5
+goto chorus 2
+? End of the first two choruses
+end_chorus:
+print Happy Birthday dear [Name],
+pause 0.5
+print Happy Birthday to you!
+pause 0.5
+goto end
+? Label for program end
+end:
