@@ -1,102 +1,62 @@
 #!/usr/bin/env python3
-
-import time
 import sys
+import time
 
-def parse_line(line):
-    line = line.strip()
-    if not line or line.startswith('?'):
-        return None
-    tokens = line.split(None, 1)
-    cmd = tokens[0]
-    if len(tokens) == 1:
+def simple_flow_interpreter(file_name=None):
+    if file_name:
+        with open(file_name, 'r') as file:
+            program = file.read().split('\n')
+    else:
+        program = ['pause 1', 'print Hello, World!', 'pause 1', 'end']
+
+    labels = {}
+    counters = {}
+
+    for idx, line in enumerate(program):
+        if line.startswith('?'):
+            continue
         if line.endswith(':'):
-            return ('label', line[:-1], None)
-        else:
-            return (cmd, None, None)
-    elif len(tokens) == 2:
-        arg = tokens[1]
-        if cmd == "goto":
-            args = arg.split(None, 1)
-            if len(args) == 1:
-                return cmd, args[0], None
-            else:
-                return cmd, args[0], args[1]
-        else:
-            return cmd, arg, None
-    else:
-        raise ValueError(f"Invalid line: {line}")
+            labels[line[:-1]] = idx
 
-def parse_program(program):
-    lines = program.splitlines()
-    commands = [parse_line(line) for line in lines]
-    commands = [cmd for cmd in commands if cmd is not None]
-    return commands
+    line_number = 0
+    while line_number < len(program):
+        line = program[line_number].strip()
+        if line.startswith('?'):
+            line_number += 1
+            continue
 
-def run_program(commands):
-    goto_labels = {cmd[1]: idx for idx, cmd in enumerate(commands) if cmd[0] == 'label'}
-    loop_counters = {}
-    idx = 0
-    while idx < len(commands):
-        cmd, arg, loop_arg = commands[idx]
-        if cmd == "pause":
-            time.sleep(float(arg))
-        elif cmd == "print":
-            print(arg)
-        elif cmd == "goto":
-            if arg not in goto_labels:
-                raise ValueError(f"Invalid goto label: {arg}")
-            if loop_arg:
-                max_loops = int(loop_arg)
-                if arg not in loop_counters:
-                    loop_counters[arg] = 1
-                else:
-                    loop_counters[arg] += 1
-                if loop_counters[arg] <= max_loops:
-                    idx = goto_labels[arg]
-                    continue
-            else:
-                idx = goto_labels[arg]
+        parts = line.split()
+
+        if len(parts) == 0:
+            line_number += 1
+            continue
+
+        command, args = parts[0], parts[1:]
+
+        if command == "pause":
+            time.sleep(float(args[0]))
+        elif command == "print":
+            print(" ".join(args))
+        elif command == "goto":
+            label = args[0]
+            count = int(args[1]) if len(args) > 1 else 1
+
+            counter_key = f"{label}_{line_number}"
+
+            if counter_key not in counters:
+                counters[counter_key] = count
+
+            if counters[counter_key] > 0:
+                line_number = labels[label]
+                counters[counter_key] -= 1
                 continue
-        elif cmd == "label":
-            pass  # Ignore label lines
-        else:
-            raise ValueError(f"Invalid command: {cmd}")
-        idx += 1
+        elif command == "end":
+            break
 
-def main(file_path=None):
-    default_program = """
-        ? This is a simple example program
-        print Start
-        pause 1
-        ? Program loop here
-        loop:
-        print InsideLoop
-        pause 0.5
-        goto loop 3
-        ? Label for end of loop
-        end_of_loop:
-        print AfterLoop
-        pause 1
-        goto end
-        ? Label for program end
-        end:
-    """
-
-    if file_path:
-        with open(file_path, 'r') as file:
-            program = file.read()
-    else:
-        program = default_program
-
-    try:
-        commands = parse_program(program)
-        run_program(commands)
-    except ValueError as e:
-        print(f"Error: {e}")
+        line_number += 1
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        main(sys.argv[1])
+        simple_flow_interpreter(sys.argv[1])
     else:
-        main()
+        simple_flow_interpreter()

@@ -9,6 +9,6 @@ goto end
 end_chorus:
 print Happy Birthday dear [Name]
 pause 0.5
-goto chorus 3
+goto chorus 1
 ? Label for program end
 end:
