@@ -1,0 +1,18 @@
+? Twinkle, Twinkle, Little Star in SimpleFlow
+start:
+print Twinkle twinkle little star
+pause 0.5
+print How I wonder what you are
+pause 0.5
+goto start 1
+? End of the first two verses
+goto end_first 1
+goto end
+end_first:
+print Up above the world so high
+pause 0.5
+print Like a diamond in the sky
+pause 0.5
+goto start 1
+? End of the song
+end:
