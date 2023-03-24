@@ -1,0 +1,8 @@
+main:
+print main
+pause 0.3
+goto main 5
+loop:
+print looping
+pause 1
+goto loop

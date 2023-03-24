@@ -39,16 +39,19 @@ def simple_flow_interpreter(file_name=None):
             print(" ".join(args))
         elif command == "goto":
             label = args[0]
-            count = int(args[1]) if len(args) > 1 else 1
+            count = int(args[1]) if len(args) > 1 else None
 
             counter_key = f"{label}_{line_number}"
+            if count is not None:
+                if counter_key not in counters:
+                    counters[counter_key] = count
 
-            if counter_key not in counters:
-                counters[counter_key] = count
-
-            if counters[counter_key] > 0:
-                line_number = labels[label]
-                counters[counter_key] -= 1
+                if counters[counter_key] > 0:
+                    line_number = labels[label]
+                    counters[counter_key] -= 1
+                    continue
+            else:
+                line_number=labels[label]
                 continue
         elif command == "end":
             break
