@@ -1,19 +1,29 @@
+#!/usr/bin/env python3
+
 import time
+import sys
 
 def parse_line(line):
     line = line.strip()
     if not line or line.startswith('?'):
         return None
-    tokens = line.split(None, 2)
+    tokens = line.split(None, 1)
+    cmd = tokens[0]
     if len(tokens) == 1:
         if line.endswith(':'):
             return ('label', line[:-1], None)
         else:
-            return (tokens[0], None, None)
+            return (cmd, None, None)
     elif len(tokens) == 2:
-        return tokens[0], tokens[1], None
-    elif len(tokens) == 3:
-        return tokens
+        arg = tokens[1]
+        if cmd == "goto":
+            args = arg.split(None, 1)
+            if len(args) == 1:
+                return cmd, args[0], None
+            else:
+                return cmd, args[0], args[1]
+        else:
+            return cmd, arg, None
     else:
         raise ValueError(f"Invalid line: {line}")
 
@@ -54,9 +64,9 @@ def run_program(commands):
             raise ValueError(f"Invalid command: {cmd}")
         idx += 1
 
-def main():
-    program = """
-	? This is a simple example program
+def main(file_path=None):
+    default_program = """
+        ? This is a simple example program
         print Start
         pause 1
         ? Program loop here
@@ -73,6 +83,12 @@ def main():
         end:
     """
 
+    if file_path:
+        with open(file_path, 'r') as file:
+            program = file.read()
+    else:
+        program = default_program
+
     try:
         commands = parse_program(program)
         run_program(commands)
@@ -80,4 +96,7 @@ def main():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    else:
+        main()

@@ -1,0 +1,21 @@
+? This is a simple poem
+print Roses are red,
+pause 0.5
+print Violets are blue,
+pause 0.5
+? Loop for repeated stanzas
+loop:
+print Sugar is sweet,
+pause 0.5
+print And so are you.
+pause 1
+goto loop 2
+? End of the repeated stanzas
+end_of_loop:
+print But sometimes they wither,
+pause 0.5
+print Like friendships too.
+pause 0.5
+goto end
+? Label for program end
+end:
